@@ -12,6 +12,7 @@ require("lib/util")
 require("entity")
 
 require("games/pong/gamestate")
+require("games/roguelike/gamestate")
 
 keyconfig = require("keyconfig")
 
@@ -27,8 +28,9 @@ function love.load()
 	gameStateManager = GameStateManager:new()
 	
 	gameStateManager:registerState(PongGameState)
+	gameStateManager:registerState(RoguelikeGameState)
 	
-	gameStateManager:changeState(PongGameState, true)
+	gameStateManager:changeState(RoguelikeGameState, true)
 	
 end
 
@@ -39,7 +41,7 @@ function love.draw()
 	if global.takeScreenshot then
 		global.takeScreenshot = false
 		local screenshot = love.graphics.newScreenshot()
-		screenshot:encode( "pg_" .. love.timer.getMicroTime() .. ".png" )
+		screenshot:encode( "pg_" .. love.timer.getTime() .. ".png" )
 	end
 end
 

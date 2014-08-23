@@ -6,11 +6,11 @@ function Paddle:initialize(x, y, state)
 	PongEntity.initialize(self, x, y, state)
 	
 	self.graphics = Graphics:new("assets/pong/paddle.png")
-	self.graphics.offset = {8, 32}
+	self.graphics.offset = {16, 64}
 	
 	self:offsetToHitbox()
 	
-	self.speedY = 150
+	self.speedY = 200
 end
 
 local PlayerPaddle = Paddle:subclass("PlayerPaddle")
@@ -54,7 +54,7 @@ function CpuPaddle:initialize(x, y, state)
 	
 	self.delta = 10
 	
-	self.speedY = 100
+	self.speedY = 150
 end
 
 function CpuPaddle:update(dt)

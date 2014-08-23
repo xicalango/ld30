@@ -5,13 +5,24 @@ local Ball = PongEntity:subclass("Ball")
 function Ball:initialize(x, y, state)
 	PongEntity.initialize(self, x, y, state)
 	
-	self.graphics = Graphics:new("assets/pong/ball.png")
-	self.graphics.offset = {5, 5}
+	self.initX = x
+	self.initY = y
 	
-	self.speedX = 100
-	self.speedY = 100
+	self.baseSpeed = 150
+	
+	self:reset()
+	
+	self.graphics = Graphics:new("assets/pong/ball.png")
+	self.graphics.offset = {10, 10}
 	
 	self:offsetToHitbox()
+end
+
+function Ball:reset()
+	self.x = self.initX
+	self.y = self.initY
+	self.speedX = self.baseSpeed
+	self.speedY = self.baseSpeed
 end
 
 function Ball:doesCollideOn(x, y)
