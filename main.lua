@@ -11,8 +11,13 @@ require("lib/util")
 
 require("entity")
 
+require("tileset")
+require("map")
+
 require("games/pong/gamestate")
 require("games/roguelike/gamestate")
+--require("games/jnr/gamestate")
+require("games/bmup/gamestate")
 
 keyconfig = require("keyconfig")
 
@@ -29,8 +34,10 @@ function love.load()
 	
 	gameStateManager:registerState(PongGameState)
 	gameStateManager:registerState(RoguelikeGameState)
+	--gameStateManager:registerState(JNRGameState)
+	gameStateManager:registerState(BmupGameState)
 	
-	gameStateManager:changeState(RoguelikeGameState, true)
+	gameStateManager:changeState(BmupGameState)
 	
 end
 

@@ -1,6 +1,6 @@
 -- Paddle Game - #LD30 -- by <weldale@gmail.com>
 
-RoguelikeMap = class("RoguelikeMap")
+
 
 local Room = class("Room")
 
@@ -57,34 +57,28 @@ function Room:render(map)
 	
 end
 
-function RoguelikeMap:initialize( width, height, tileset )
+RoguelikeMap = Map:subclass("RoguelikeMap")
+
+function RoguelikeMap:initialize( width, height )
+	Map.initialize( self, width, height )
 	self.width = width
 	self.height = height
-	
-	self.tileset = tileset
 	
 	self:generate()
 	
 end
 
 function RoguelikeMap:generate()
-	
-	self.map = {}
 	self.shadowMap = {}
-	
-	self.objects = {}
 	
 	for y = 1, self.height do
 		
-		local line = {}
 		local shadowMapLine = {}
 		
 		for x = 1, self.width do
-			line[x] = ""
 			shadowMapLine[x] = 0
 		end
 		
-		self.map[y] = line
 		self.shadowMap[y] = shadowMapLine
 		
 	end
@@ -151,10 +145,31 @@ function RoguelikeMap:generate()
 	
 	self.startPosition = {self.rooms[1]:getMidpoint()}
 	
+	self.objects[1] = self.startPosition
+	
+	self:revealAt(unpack(self.startPosition))
+	
+end
+
+function RoguelikeMap:isVisible( x, y )
+	if self:checkOutOfBounds(x,y) then
+		return false
+	end
+	
+	return self.shadowMap[y][x] == 1
+end
+
+function RoguelikeMap:revealAt(x, y)
+	for yy = y-1, y+1 do
+		for xx = x-1, x+1 do
+			if not self:checkOutOfBounds(xx,yy) then
+				self.shadowMap[y][x] = 1
+			end
+		end
+	end
 end
 
 function RoguelikeMap:createRoom()
-	
 	local x = love.math.random( self.width )
 	local y = love.math.random( self.height )
 	
@@ -164,35 +179,6 @@ function RoguelikeMap:createRoom()
 	return Room:new(x,y,width,height)
 end
 
-function RoguelikeMap:checkOutOfBounds(x, y)
-	return x <= 0 or y <= 0 or x > self.width or y > self.height
-end
-
-function RoguelikeMap:tileAt(x, y)
-	if self:checkOutOfBounds(x,y) then
-		return nil
-	end
-		
-	return self.map[y][x]
-end
-
-function RoguelikeMap:setTileAt(x, y, t)
-	if self:checkOutOfBounds(x,y) then
-		return
-	end
-
-	
-	self.map[y][x] = t
-end
-
-function RoguelikeMap:draw()
-	
-	for y = 1, self.height do
-		for x = 1, self.width do
-			if self.shadowMap[y][x] == 1 then
-				self.tileset:draw( x, y, self.map[y][x] )
-			end
-		end
-	end
-	
+function RoguelikeMap:shouldDraw(x,y)
+	return self:isVisible(x,y)
 end

@@ -15,6 +15,7 @@ function Entity:initialize(x, y, state)
 	self.vx = 0
 	self.vy = 0
 	
+	self.ax = 0
 	self.ay = 0
 	
 	self.speedX = 10
@@ -42,6 +43,17 @@ function Entity:getHitRectangle(x, y)
 		y + self.hitbox.bottom
 end
 
+function Entity:getHitRectangleTable(x, y)
+	x = x or self.x
+	y = y or self.y
+	return { 
+		{x - self.hitbox.left, y - self.hitbox.top}, 
+		{x - self.hitbox.left, y + self.hitbox.bottom}, 
+		{x + self.hitbox.right, y - self.hitbox.top}, 
+		{x + self.hitbox.right, y + self.hitbox.bottom}
+	}
+end
+
 function Entity:collidesWith(entity)
 
 	local or1x, or1y, or2x, or2y = self:getHitRectangle()
@@ -53,10 +65,8 @@ end
 
 
 function Entity:update(dt)
-
-	if self.ay ~= 0 then
-		self.vy = self.vy + self.ay * dt
-	end
+	
+	local collides, e
 	
 	if self.vx ~= 0 or self.vy ~= 0 then
 		
@@ -65,13 +75,18 @@ function Entity:update(dt)
 		local newX = self.x + (self.vx * self.speedX * dt)
 		local newY = self.y + (self.vy * self.speedY * dt)
 		
-		local collides, e = self:doesCollideOn(newX, newY)
+		collides, e = self:doesCollideOn(newX, newY, signum(newX - oldX), signum(newY - oldY))
 		
 		if collides then
-			if not self:doesCollideOn(newX, oldY) then
+			if not self:doesCollideOn(newX, oldY, signum(newX - oldX), 0) then
+				self.vy = 0
 				self.x = newX
-			elseif not self:doesCollideOn(oldX, newY) then
+			elseif not self:doesCollideOn(oldX, newY, 0, signum(newY - oldY)) then
+				self.vx = 0
 				self.y = newY
+			else
+				self.vx = 0
+				self.vy = 0
 			end
 		else
 			self.x = newX
@@ -85,13 +100,27 @@ function Entity:update(dt)
 		
 	end
 	
+	if not collides then
+		if self.ay ~= 0 and not self:isObstacleInDir(0, signum(self.ay)) then
+			self.vy = self.vy + self.ay * dt
+		end
+		
+		if self.ax ~= 0 and not self:isObstacleInDir(signum(self.ax), 0) then
+			self.vx = self.vx + self.ax * dt
+		end
+	end
+	
 end
 
 function Entity:collideWith(e)
 end
 
-function Entity:doesCollideOn( newX, newY )
-	return true
+function Entity:isObstacleInDir(x, y)
+	return false
+end
+
+function Entity:doesCollideOn( newX, newY, dx, dy )
+	return false
 end
 
 function Entity:draw()
