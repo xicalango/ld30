@@ -1,5 +1,5 @@
 -- Paddle Game - #LD30 -- by <weldale@gmail.com>
--- Original: Rocks-n-Blaster -- #LD48 -- by <weldale@gmail.com>
+-- Original: Rocks-n-Blaster -- #LD48 -- by <weldale@gmail.com> https://github.com/xicalango/Rocks-n-Blaster
 
 AbstractGraphics = class("AbstractGraphics")
 
